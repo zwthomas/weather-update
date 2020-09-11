@@ -31,6 +31,8 @@ import snow from "./imgs/snow.svg"
 import snow_heavy from "./imgs/snow_heavy.svg"
 import snow_light from "./imgs/snow_light.svg"
 import tstorm from "./imgs/tstorm.svg"
+import moon from "./imgs/moon1.svg"
+// https://www.climacell.co/
 
 
 
@@ -41,13 +43,14 @@ async function getWeather(event, setWeather) {
   event.preventDefault();  
 
   const response = await axios.get("https://api.climacell.co/v3/weather/forecast/daily?lat=41.881832&lon=-87.623177&unit_system=us&start_time=now&fields=precipitation%2Csunrise%2Csunset%2Cprecipitation_probability%2Cmoon_phase%2Cweather_code%2Ctemp&apikey=")
-  const current = await axios.get("https://api.climacell.co/v3/weather/realtime?lat=41.881832&lon=-87.623177&unit_system=us&fields=temp%2Cweather_code&apikey=")
+  const current = await axios.get("https://api.climacell.co/v3/weather/realtime?lat=41.881832&lon=-87.623177&unit_system=us&fields=temp%2Cweather_code%2Cmoon_phase%2Csunrise%2Csunset&apikey=")
   // alert(JSON.stringify(current.data.temp.value))
   // alert(current.data.temp.value)
   setWeather({
     city: "Chicago, IL", 
     temp: current.data.temp.value,
-    weather_code: current.data.weather_code.value
+    weather_code: current.data.weather_code.value,
+    moon_phase: current.data.moon_phase.value
   })
 }
 
@@ -83,7 +86,7 @@ function App() {
   
   }
 
-  const [weather, setWeather] = useState({city: "----",temp: "--", weather_code: "---"});
+  const [weather, setWeather] = useState({city: "----",temp: "--", weather_code: "---", moon_phase:"---"});
   return (
     <div className="App">
       <div className="holder">
@@ -98,6 +101,11 @@ function App() {
               <img src={weatherLookup[weather.weather_code][1]} width="64" height="64" /> 
               <h2 className="temp">{weather.temp}°</h2> 
               <h3 className="condition">{weatherLookup[weather.weather_code][0]}</h3>
+            </div>
+            <div className="moon"> 
+            <img src={moon} width="64" height="64" /> 
+            <h3>{weather.moon_phase}</h3>
+
             </div>
           </div>
         </Form>
