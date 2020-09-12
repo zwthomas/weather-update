@@ -5,7 +5,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
 import Switch from '@material-ui/core/Switch';
-import Slider from "./components/slider/Slider"
 import axios from 'axios';
 import clear_day from "./imgs/clear_day.svg"
 import clear_night from "./imgs/clear_night.svg"
@@ -45,7 +44,10 @@ import citation from "./imgs/citation.svg"
 
 // https://www.climacell.co/
 
-
+const COLORS = {
+  bg_dark: "#121212",
+  bg_lite: "#FFFFFF"
+} 
 
 
 
@@ -154,6 +156,19 @@ function selectWeatherIcon(codeName) {
   }
 
 }
+function themeSwitch(colors, setColors) {
+  if (colors.bg === COLORS.bg_lite) {
+    setColors({
+      bg: COLORS.bg_dark,
+      font: COLORS.bg_lite
+    })
+  } else {
+    setColors({
+      bg: COLORS.bg_lite,
+      font: COLORS.bg_dark
+    })
+  }
+}
 
 function App() {
   const weatherLookup = {
@@ -199,29 +214,34 @@ function App() {
     sunset: "-"
   
   });
+
+  const [colors, setColors] = useState({
+    bg: COLORS.bg_lite,
+    font: COLORS.bg_dark
+  });  
   return (
-    <div className="App" >
+    <div className="App" style={{backgroundColor: colors.bg}}>
       
       <div className="holder" >
-      <Switch className="bob"/>
+      <Switch className="bob"onClick={() => themeSwitch(colors, setColors)}/>
         <Form onSubmit={(event) => getWeather(event,setWeather)}>
           <div className="search">
             <Form.Control type="textarea" placeholder="🔍 Search" />
             <Button type="submit" variant="secondary">🔍</Button>
           </div>
           <div className="weather">
-            <h1>➤ {weather.city}</h1>
+            <h1 style={{color: colors.font}}>➤ {weather.city}</h1>
             <div className="currentConditions">
               <img src={selectWeatherIcon(weather.weather_code)} width="64" height="64" /> 
-              <h2 className="temp">{weather.temp}°</h2> 
-              <h3 className="condition">{nameForDisplay(weather.weather_code)}</h3>
+              <h2 className="temp" style={{color: colors.font}}>{weather.temp}°</h2> 
+              <h3 className="condition" style={{color: colors.font}}>{nameForDisplay(weather.weather_code)}</h3>
             </div>
             <div className="sun">
-              <h3><b>Rise:</b> {weather.sunrise} <b>Set:</b> {weather.sunset}</h3>
+              <h3 style={{color: colors.font}}><b>Rise:</b> {weather.sunrise} <b>Set:</b> {weather.sunset}</h3>
             </div>
             <div className="moon"> 
               <img src={selectMoonIcon(weather.moon_phase)} width="64" height="64" /> 
-              <h3 className="moonPhase">{nameForDisplay(weather.moon_phase)}</h3>
+              <h3 className="moonPhase" style={{color: colors.font}}>{nameForDisplay(weather.moon_phase)}</h3>
             </div>
           </div>
         </Form>
