@@ -41,6 +41,7 @@ import  waning_gibbous from "./imgs/waning_gibbous.svg"
 import  waxing_crescent from "./imgs/waxing_crescent.svg"
 import waxing_gibbous from "./imgs/waxing_gibbous.svg"
 import citation from "./imgs/citation.svg"
+import precip from "./imgs/precip.svg"
 
 // https://www.climacell.co/
 
@@ -49,18 +50,26 @@ const COLORS = {
   bg_lite: "#FFFFFF"
 } 
 
+const LIMIT = 20
 
 
 
-async function getWeather(event, setWeather) {
-  event.preventDefault();  
+
+async function getWeather(event, setWeather,location) {
+  event.preventDefault(); 
+
+  let encodedLocation = encodeURI(location)
+  const geoResponse = await axios.get("https://us1.locationiq.com/v1/search.php?key=&q=" + encodedLocation + "&format=json")
+  
+  let lat = geoResponse.data[0].lat
+  let lon = geoResponse.data[0].lon
 
   const response = await axios.get("https://api.climacell.co/v3/weather/forecast/daily?lat=41.881832&lon=-87.623177&unit_system=us&start_time=now&fields=precipitation%2Csunrise%2Csunset%2Cprecipitation_probability%2Cmoon_phase%2Cweather_code%2Ctemp&apikey=")
-  const current = await axios.get("https://api.climacell.co/v3/weather/realtime?lat=41.881832&lon=-87.623177&unit_system=us&fields=temp%2Cweather_code%2Cmoon_phase%2Csunrise%2Csunset&apikey=")
-  alert(JSON.stringify(current.data))
-  // alert(current.data.temp.value)
+  const current = await axios.get("https://api.climacell.co/v3/weather/realtime?lat=" + lat + "&lon=" + lon + "&unit_system=us&fields=temp%2Cweather_code%2Cmoon_phase%2Csunrise%2Csunset&apikey=")
+
+  let locName = geoResponse.data[0].display_name
   setWeather({
-    city: "Chicago, IL", 
+    city: locName.substring(0, LIMIT) + ((locName.length < LIMIT) ? "" : "..."), 
     temp: current.data.temp.value,
     weather_code: current.data.weather_code.value,
     moon_phase: current.data.moon_phase.value,
@@ -170,6 +179,10 @@ function themeSwitch(colors, setColors) {
   }
 }
 
+function formChange(event, setLocation) {
+  setLocation({input: event.target.value})
+}
+
 function App() {
   const weatherLookup = {
     "clear_day":"",
@@ -211,34 +224,49 @@ function App() {
     weather_code: "---", 
     moon_phase:"---",
     sunrise: "-",
-    sunset: "-"
+    sunset: "-",
+    precip: "--"
   
   });
 
   const [colors, setColors] = useState({
     bg: COLORS.bg_lite,
     font: COLORS.bg_dark
-  });  
+  });
+
+  const [location, setLocation] = useState({
+    input: ""
+  })
+  
   return (
     <div className="App" style={{backgroundColor: colors.bg}}>
       
       <div className="holder" >
-      <Switch className="bob"onClick={() => themeSwitch(colors, setColors)}/>
-        <Form onSubmit={(event) => getWeather(event,setWeather)}>
+      <Switch className="bob" onClick={() => themeSwitch(colors, setColors)}/>
+        <Form onSubmit={(event) => getWeather(event,setWeather, location.input)}>
           <div className="search">
-            <Form.Control type="textarea" placeholder="🔍 Search" />
+            <Form.Control 
+              value={location.input}
+              onChange={(event) => formChange(event, setLocation)} 
+              type="textarea" 
+              placeholder="🔍 Search" 
+            />
             <Button type="submit" variant="secondary">🔍</Button>
           </div>
           <div className="weather">
-            <h1 style={{color: colors.font}}>➤ {weather.city}</h1>
+            <h2 style={{color: colors.font}}>➤ {weather.city}</h2>
             <div className="currentConditions">
               <img src={selectWeatherIcon(weather.weather_code)} width="64" height="64" /> 
               <h2 className="temp" style={{color: colors.font}}>{weather.temp}°</h2> 
               <h3 className="condition" style={{color: colors.font}}>{nameForDisplay(weather.weather_code)}</h3>
             </div>
-            <div className="sun">
-              <h3 style={{color: colors.font}}><b>Rise:</b> {weather.sunrise} <b>Set:</b> {weather.sunset}</h3>
-            </div>
+            {/* <div className="rainChance">
+              <img src={precip} width="64" height="64" />
+              <h2 className="percent" style={{color: colors.font}}> {weather.precip}%</h2>
+            </div> */}
+            {/* <div className="sun">
+              <h3 style={{color: colors.font}}><b>Day:</b> {weather.sunrise}-{weather.sunset}</h3>
+            </div> */}
             <div className="moon"> 
               <img src={selectMoonIcon(weather.moon_phase)} width="64" height="64" /> 
               <h3 className="moonPhase" style={{color: colors.font}}>{nameForDisplay(weather.moon_phase)}</h3>
