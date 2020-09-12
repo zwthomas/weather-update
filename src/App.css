@@ -1,13 +1,12 @@
 .App {
+}
+
+.holder {
   position: fixed;
   top: 50%;
   left: 50%;
   /* bring your own prefixes */
   transform: translate(-50%, -50%);
-}
-
-.holder {
-   
 }
 .search {
   display:flex
@@ -24,3 +23,26 @@
 .condition {
   padding-top: 15px;
 }
+
+.moon {
+  display: flex;
+}
+
+.moonPhase {
+  padding:  15px;
+}
+
+.citation {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  max-width:20%;
+  height:auto;
+}
+
+.bob {
+  z-index:1000;
+  left: 80%;
+  padding-right: 100px;
+}
+ 
