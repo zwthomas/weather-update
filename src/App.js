@@ -64,7 +64,7 @@ async function getWeather(event, setWeather,location) {
   let lat = geoResponse.data[0].lat
   let lon = geoResponse.data[0].lon
 
-  const response = await axios.get("https://api.climacell.co/v3/weather/forecast/daily?lat=41.881832&lon=-87.623177&unit_system=us&start_time=now&fields=precipitation%2Csunrise%2Csunset%2Cprecipitation_probability%2Cmoon_phase%2Cweather_code%2Ctemp&apikey=")
+  // const response = await axios.get("https://api.climacell.co/v3/weather/forecast/daily?lat=41.881832&lon=-87.623177&unit_system=us&start_time=now&fields=precipitation%2Csunrise%2Csunset%2Cprecipitation_probability%2Cmoon_phase%2Cweather_code%2Ctemp&apikey=")
   const current = await axios.get("https://api.climacell.co/v3/weather/realtime?lat=" + lat + "&lon=" + lon + "&unit_system=us&fields=temp%2Cweather_code%2Cmoon_phase%2Csunrise%2Csunset&apikey=")
 
   let locName = geoResponse.data[0].display_name
@@ -184,39 +184,7 @@ function formChange(event, setLocation) {
 }
 
 function App() {
-  const weatherLookup = {
-    "clear_day":"",
-    "clear_night":"",
-
-
-    "cloudy":"",
-    "drizzle":"",
-    "flurries":"",
-    "fog":"",
-    "fog_light":"",
-    "freezing_drizzle":"",
-    "freezing_rain":"",
-    "freezing_rain_heavy":"",
-    "freezing_rain_light":"",
-    "ice_pellets":"",
-    "ice_pellets_heavy":"",
-    "ice_pellets_light":"",
-    
-    "mostly_clear_day":"",
-    "mostly_clear":["Mostly Clear", mostly_clear_night],
-    "mostly_cloudy":"",
-    "partly_cloudy_day":"",
-    "partly_cloudy_night":"",
-    "rain":"",
-    "rain_heavy":"",
-    "rain_light":"",
-    "snow":"",
-    "snow_heavy":"",
-    "snow_light":"",
-    "tstorm":"",
-    "---":""
   
-  }
 //weatherLookup[weather.weather_code][1]
   const [weather, setWeather] = useState({
     city: "----",
